@@ -18,11 +18,10 @@ corkmork | or hack on ld.so (so it can interpose only one lib) :-p
 static size_t liboffsets[100];
 static int offsets_i = 0;
 
-void *(*origmalloc)(size_t);
+static void *(*origmalloc)(size_t);
 
 void __attribute__((constructor)) mallocsetup() {
-  /*origmalloc = dlsym(RTLD_NEXT, "malloc");*/
-  origmalloc = malloc;
+  origmalloc = dlsym(RTLD_NEXT, "malloc");
 
   char buf[512];
   FILE *selfmaps = fopen("/proc/self/maps", "r");
@@ -44,7 +43,7 @@ void __attribute__((constructor)) mallocsetup() {
 
 
 
-int lookup(void *addr) {
+static int lookup(void *addr) {
   printf("looking up %p\n", addr);
   for (int i = 0; i < offsets_i; i += 2)
     if ((size_t)addr <= liboffsets[i] && (size_t)addr >= liboffsets[i+1])
@@ -52,8 +51,8 @@ int lookup(void *addr) {
   return 0;
 }
 
-/*void *malloc(size_t size) {*/
-  /*if (lookup(__builtin_return_address(0)))*/
-    /*puts("malloc called from leak1");*/
-  /*return origmalloc(size);*/
-/*}*/
+void *malloc(size_t size) {
+  if (lookup(__builtin_return_address(0)))
+    puts("malloc called from leak1");
+  return origmalloc(size);
+}

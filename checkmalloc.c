@@ -45,7 +45,7 @@ void __attribute__((constructor)) mallocsetup() {
 
 static int lookup(void *addr) {
   for (int i = 0; i < offsets_i; i += 2)
-    if ((size_t)addr <= liboffsets[i] && (size_t)addr >= liboffsets[i+1])
+    if ((size_t)addr >= liboffsets[i] && (size_t)addr <= liboffsets[i+1])
       return 1;
   return 0;
 }

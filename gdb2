@@ -1,4 +1,0 @@
-set environment LD_LIBRARY_PATH .
-set environment LD_PRELOAD ./libcheckmalloc.so
-set breakpoint pending on
-break lookup

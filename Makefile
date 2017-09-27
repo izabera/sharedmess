@@ -17,5 +17,11 @@ clean:
 	rm -f *.*o thing
 
 run: thing
-	gdb -q -x gdb1 ./thing
-	gdb -q -x gdb2 ./thing
+	@echo
+	@printf '\033[32m############# RUN WITHOUT CHECKMALLOC #############\033[m\n'
+	@echo
+	LD_LIBRARY_PATH=. ./thing
+	@echo
+	@printf '\033[32m############### RUN WITH CHECKMALLOC ##############\033[m\n'
+	@echo
+	LD_PRELOAD=./libcheckmalloc.so LD_LIBRARY_PATH=. ./thing

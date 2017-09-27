@@ -1,13 +1,14 @@
-BUILDSO = $(CC) $(CFLAGS) -fPIC -shared -g
+BUILD = $(CC) $(CFLAGS) -g $< -o $@
+BUILDSO = $(BUILD) -fPIC -shared
 
 thing: main.o libleak1.so libleak2.so libcheckmalloc.so
-	$(CC) $(CFLAGS) $(LDFLAGS) $< -o $@ -L. -lleak1 -lleak2
+	$(BUILD) -L. -lleak1 -lleak2
 
 libleak%.so: leak.c
-	$(BUILDSO) -Dleak=leak$* $< -o $@
+	$(BUILDSO) -Dleak=leak$*
 
 libcheckmalloc.so: checkmalloc.c
-	$(BUILDSO) $< -o $@ -ldl
+	$(BUILDSO) -ldl
 
 .PHONY: clean run
 
@@ -15,5 +16,5 @@ clean:
 	rm -f *.*o thing
 
 run: thing
-	LD_LIBRARY_PATH=$$PWD ./thing
-	LD_PRELOAD=$$PWD/libcheckmalloc.so LD_LIBRARY_PATH=$$PWD ./thing
+	gdb -q -x gdb1 ./thing
+	gdb -q -x gdb2 ./thing

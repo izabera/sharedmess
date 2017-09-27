@@ -1,4 +1,5 @@
-BUILD = $(CC) $(CFLAGS) -g $< -o $@
+override CFLAGS += -g
+BUILD = $(CC) $(CFLAGS) $< -o $@
 BUILDSO = $(BUILD) -fPIC -shared
 
 thing: main.o libleak1.so libleak2.so libcheckmalloc.so
